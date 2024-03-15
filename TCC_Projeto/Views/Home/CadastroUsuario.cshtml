@@ -1,0 +1,73 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/Cadastro.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com%22%3"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <title>Automação de Fita | Login</title>
+</head>
+<body>
+    <div id="container">
+        <div id="img-login"></div>
+        <div id="div-warp-container">
+            <div id="login-warp">
+                <form method="post" action="/Home/Cadastrar">
+                    <h5 style="margin-bottom: 50px;">AUTOMAÇÃO DE IMPRESSÃO</h5>
+                    <div class="row">
+                        <div>
+                            <label for="Username">Nome de Usuario</label>
+                            <input type="text" id="Username" name="Username">
+                        </div>
+                        <br>
+
+                        <div>
+                            <label for="Password">Senha</label>
+                            <input type="password" id="Password" name="Password">
+                        </div>
+                        <br>
+
+                        <div>
+                            <label for="Password2">Confirmar senha</label>
+                            <input type="password" id="Password2" name="Password2">
+                        </div>
+                        <br>
+
+                        <div>
+                            <label for="Nome">Nome</label>
+                            <input type="text" id="Nome" name="Nome">
+                        </div>
+                        <br>
+
+                        <div>
+                            <label for="Sobrenome">SobreNome</label>
+                            <input type="text" id="Sobrenome" name="Sobrenome">
+                        </div>
+                        <br>
+
+                        <div>
+                            <label for="Email">E-Mail</label>
+                            <input type="Email" id="Email" name="Email">
+                        </div>
+                        <br>
+
+                        
+
+                        <div>
+                            <button type="submit">Cadastrar</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

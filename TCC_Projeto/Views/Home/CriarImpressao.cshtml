@@ -1,0 +1,125 @@
+﻿@page
+@model TCC_Projeto.Views.Home.CriarImpressaoModel
+
+<div class="container">
+    <h2 class="text-dark">Criar Novo PDF</h2>
+
+    <!-- Inputs -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <label class="text-dark" for="id_pedido">Pedido</label>
+            <input type="number" class="form-control" id="id_pedido" name="NPedido">
+        </div>
+        <div class="col-md-3">
+            <label class="text-dark" for="id_data">Data de Lançamento</label>
+            <input type="date" class="form-control" id="id_data" placeholder="Insira uma data" name="Data">
+        </div>
+        <div class="col-md-4">
+            <label class="text-dark" for="id_csv">CSV</label>
+            <input type="file" class="form-control" id="id_csv" placeholder="Selecione um Arquivo" accept=".csv" name="PDF">
+        </div>
+
+        <div class="col-md-2" style="margin-top:23px">
+            <button id="enviar_formulario" class="btn btn-success"><i class="fa fa-check"></i> Enviar</button>
+        </div>
+    </div>
+    <hr>
+    <!-- FIM Inputs -->
+    <!-- pesquisa de etiqueta -->
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4 offset-md-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="pesquisarEtiqueta" placeholder="Pesquisar etiqueta">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" id="btnPesquisar" type="button">Pesquisar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fim pesquisa de etiqueta -->
+</div>
+
+<div class="container mt-5 text-dark" >
+    <div class="row" id="cards_fita">
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/Etiqueta/ObterTodasEtiquetas', // Atualize a URL conforme necessário
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data[0])
+                // Manipule os dados recebidos aqui
+                if (data && data.length > 0) {
+                    // Loop através dos dados e adicione cards para cada etiqueta
+                    for (i = 0; i <= data.length; i++) {
+                        console.log(data[i])
+                        var cardHtml = `
+                            <div class="col-md-3">
+                                <div class="card">
+                                                    <img src="data:image/jpeg;base64,${data[i].imagem}" class="card-img-top" alt="..." style="height: 200px;object-fit: cover;">
+                                    <div class="card-body">
+                                        <h5 class="card-title text-dark">${data[i].nome}</h5>
+                                        <p class="card-text text-dark">${data[i].descricao}</p>
+                                    </div>
+                                </div>
+                            </div>`;
+
+                        $("#cards_fita").append(cardHtml);
+                    }
+                }
+            },
+            error: function () {
+                console.log('Erro ao carregar as etiquetas.');
+            }
+        });
+
+        $("#btnPesquisar").click(function () {
+            var textoPesquisa = $("#pesquisarEtiqueta").val().toLowerCase();
+            $(".card").each(function () {
+                var textoCard = $(this).find(".card-title").text().toLowerCase();
+                if (textoCard.includes(textoPesquisa)) {
+                    $(this).parent().show();
+                } else {
+                    $(this).parent().hide();
+                }
+            });
+        });
+    });
+
+    $('#enviar_formulario').click(function () {
+        // Crie um novo objeto FormData para armazenar os dados do formulário
+        var formData = new FormData();
+
+        // Adicione os valores dos campos ao objeto FormData
+        formData.append('NPedido', $('#id_pedido').val());
+        formData.append('Data', $('#id_data').val());
+        formData.append('PDF', $('#id_csv')[0].files[0]);
+
+        // Faça a solicitação AJAX para enviar os dados do formulário
+        $.ajax({
+            url: '/Etiqueta/CriarPDF',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                // Trate a resposta aqui, se necessário
+                console.log(response);
+            },
+            error: function () {
+                // Trate os erros de solicitação aqui, se necessário
+                alert('Erro ao enviar o formulário.');
+            }
+        });
+    });
+
+
+</script>

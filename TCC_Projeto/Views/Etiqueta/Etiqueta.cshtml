@@ -1,0 +1,192 @@
+﻿@model TCC_Projeto.Models.Etiqueta.EtiquetaViewModel
+
+@{
+    ViewBag.Title = "Formulário de Fita";
+}
+
+<div class="container">
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-dark">Adicionar nova Fita</h5>
+            <br>
+            <form id="etiquetaForm">
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="col-6">
+                        @Html.LabelFor(model => model.Nome, new { @class = "text-dark" })
+                        @Html.TextBoxFor(model => model.Nome, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Nome)
+                    </div>
+
+                    <div class="form-group col-6">
+                        @Html.LabelFor(model => model.Imagem, new { @class = "text-dark" })
+                        <input type="file" name="Imagem" id="Imagem" class="form-control" />
+                        @Html.ValidationMessageFor(model => model.Imagem)
+                    </div>
+                </div>
+                <br>
+
+                <div class="row">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Descricao, new { @class = "text-dark" })
+                        @Html.TextAreaFor(model => model.Descricao, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Descricao)
+                    </div>
+                </div>
+                <br>
+
+                <button type="submit" class="btn btn-primary" id="btnSalvar">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title text-dark">Fitas</h5>
+            <table class="table table-striped" id="etiquetasTable" width="100%">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Imagem</th>
+                        <th>Excluir</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaEtiquetasBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmarExclusaoModal" tabindex="-1" aria-labelledby="confirmarExclusaoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmarExclusaoModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir esta fita?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmarExclusao">Sim</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Inicializar DataTable
+        carregarEtiquetas();
+
+        $('#btnSalvar').click(function (event) {
+            event.preventDefault(); // Evitar o comportamento padrão do formulário
+
+            var formData = new FormData($('#etiquetaForm')[0]);
+
+            $.ajax({
+                url: '@Url.Action("EnviarEtiqueta", "Etiqueta")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    // Remover a mensagem existente, se houver
+                    carregarEtiquetas();
+                    $('#mensagemSucesso').remove();
+                    $('#etiquetaForm')[0].reset();
+
+
+                    // Adicionar a mensagem de sucesso
+                    var mensagem = '<div class="alert alert-success alert-dismissible fade show" style="position:absolute;width:100vw;" role="alert" id="mensagemSucesso">' +
+                        'Fita adicionada com sucesso' +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+                        '</div>';
+
+                    // Adicionar a mensagem ao corpo do documento
+                    $('body').append(mensagem);
+
+                    // Remover a mensagem após 5 segundos
+                    setTimeout(function () {
+                        $('#mensagemSucesso').remove();
+                    }, 3000);
+                },
+                error: function () {
+                    alert('Erro ao enviar os dados.');
+                }
+            });
+        });
+
+        $('#tabelaEtiquetasBody').on('click', '.excluir-etiqueta', function () {
+            var etiquetaId = $(this).data('id');
+
+            // Abrir o modal de confirmação
+            $('#confirmarExclusaoModal').modal('show');
+
+            // Configurar a ação de exclusão no modal de confirmação
+            $('#confirmarExclusao').click(function () {
+                // Enviar solicitação AJAX para excluir a etiqueta
+                $.ajax({
+                    url: '@Url.Action("ExcluirEtiqueta", "Etiqueta")',
+                    type: 'POST',
+                    data: { id: etiquetaId },
+                    success: function (response) {
+                        if (response.success) {
+                            $('#confirmarExclusaoModal').modal('hide');
+                            $('#tabelaEtiquetasBody').empty();
+                            location.reload()
+                        }
+
+                    },
+                    error: function () {
+                        alert('Erro ao excluir a etiqueta.');
+                    }
+                });
+            });
+           
+        });
+
+        function carregarEtiquetas() {
+            $.ajax({
+                url: '@Url.Action("ObterTodasEtiquetas", "Etiqueta")',
+                type: 'GET',
+                success: function (data) {
+                    console.log(data);
+                    // Limpar conteúdo existente na tabela
+                    if ($.fn.DataTable.isDataTable('#etiquetasTable')) {
+                        $('#etiquetasTable').DataTable().destroy();
+                        $('#tabelaEtiquetasBody').empty();
+
+                    }
+                    // Preencher a tabela com os dados retornados
+                    $.each(data, function (index, etiqueta) {
+                        var imagemHTML = '<img src="data:image/jpeg;base64,' + etiqueta.imagem + '" width="100;" style="height: 20px;object-fit: cover;" />';
+                        var linha = '<tr>' +
+                            '<td style="width: 20%">' + etiqueta.nome + '</td>' +
+                            '<td>' + etiqueta.descricao + '</td>' +
+                            '<td style="width: 7%">' + imagemHTML + '</td>' +
+                            '<td style="width: 3%; text-align: center;"><button data-id="' + etiqueta.id + '" class="btn btn-danger excluir-etiqueta"><i class="fa fa-trash"></i></button></td>'
+                        '</tr>';
+                        $('#tabelaEtiquetasBody').append(linha);
+                    });
+
+                    // Destruir DataTable existente, se houver
+
+
+                    // Inicializar DataTable após preencher os dados
+                    $('#etiquetasTable').DataTable({
+                        language: {
+                            url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese-Brasil.json'
+                        }
+                    });
+                },
+                error: function () {
+                    alert('Erro ao carregar as etiquetas.');
+                }
+            });
+        }
+    });
+</script>

@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> @ViewData["Title"] | Automação de Fita</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/TCC_PROJETO.styles.css" asp-append-version="true">
+    <link href="~/css/Layout.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/lib/datatable/datatables.min.css" rel="stylesheet">
+    <script src="~/lib/datatable/datatables.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</head>
+
+<body class="text-center">
+    <div class="cover-container d-flex w-100 h-100 mx-auto flex-column">
+        <header class="masthead mb-auto" style="background-color: #333;">
+            <div class="inner">
+                <br>
+                <h3 class="masthead-brand mt-2 text-light">Automação de Fita</h3>
+                <nav class="nav nav-masthead justify-content-center">
+                    <a class="nav-link active lista_menu" href="/Home/Entrar/">Home</a>
+                    <a class="nav-link lista_menu" href="/Etiqueta/Etiqueta/">Fita</a>
+                    <a class="nav-link lista_menu" href="#">Estoque</a>
+                </nav>
+            </div>
+        </header>
+
+        <main role="main" class="inner cover ">
+            <div class="container " style="border-radius:15px;">
+                <main role="main" class="p-3">
+                    @RenderBody()
+                </main>
+            </div>
+        </main>
+
+        <footer class="mastfoot mt-auto">
+            <div class="inner">
+                <p></p>
+            </div>
+        </footer>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
