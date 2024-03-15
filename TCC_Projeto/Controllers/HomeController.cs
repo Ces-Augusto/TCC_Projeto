@@ -27,6 +27,14 @@ namespace TCC_Projeto.Controllers
 
         }
 
+        public IActionResult Signout()
+        {
+            Response.Cookies.Delete("UserId");
+            Response.Cookies.Delete("Username");
+
+            return Redirect("~/");
+        }
+
         public async Task<IActionResult> Cadastrar(CadastroViewModel request)
         {
             if (ModelState.IsValid)
@@ -63,13 +71,6 @@ namespace TCC_Projeto.Controllers
             {
                 return View();
             }
-        }
-
-        public IActionResult Signout()
-        {
-
-
-            return Redirect("~/");
         }
 
         public IActionResult Entrar(LoginViewModel request)
